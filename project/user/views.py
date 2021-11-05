@@ -61,7 +61,7 @@ class LoginAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class TestView(APIView):
+class AllUsersView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
@@ -102,3 +102,31 @@ class MatchView(APIView):
             like_object.target = pk
             like_object.save()
             return Response({'answer': 'keep going'})
+
+
+class FilterByGenderView(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, gender):
+        queryset = User.objects.filter(gender=gender)
+        serializer = UserSerializer(queryset, many=True)
+        print(serializer.data)
+        return Response(serializer.data)
+
+class FilterByNameView(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, username):
+        queryset = User.objects.filter(username=username)
+        serializer = UserSerializer(queryset, many=True)
+        print(serializer.data)
+        return Response(serializer.data)
+
+class FilterBySurnameView(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, usersurname):
+        queryset = User.objects.filter(usersurname=usersurname)
+        serializer = UserSerializer(queryset, many=True)
+        print(serializer.data)
+        return Response(serializer.data)
