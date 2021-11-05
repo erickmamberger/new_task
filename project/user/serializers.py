@@ -1,3 +1,6 @@
+import io
+
+from PIL import Image
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 from .models import User
@@ -19,6 +22,10 @@ class RegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
 
+    def update(self, instance, validated_data):
+        print(validated_data.get('photo'))
+        return instance
+
 
 class LoginSerializer(serializers.Serializer):
 
@@ -32,6 +39,8 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, data):
         email = data.get('email', None)
         password = data.get('password', None)
+        photo = data.get('photo', None)
+        print(photo)
 
         if email is None:
             raise serializers.ValidationError(

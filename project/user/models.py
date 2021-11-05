@@ -1,18 +1,13 @@
 import time
-
 import jwt
-
 from datetime import datetime
 from datetime import timedelta
-
 from django.conf import settings
 from django.db import models
 from django.core import validators
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
-
 from .manager import UserManager
-
 
 class User(AbstractBaseUser, PermissionsMixin):
 
@@ -23,13 +18,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         (2, 'Мужчина'),
     )
     gender = models.IntegerField(choices=GENDER_TYPES)
-    photo = models.ImageField(upload_to='img/user_img/')
 
     email = models.EmailField(
         validators=[validators.validate_email],
         unique=True,
         blank=False
         )
+    photo = models.ImageField()
 
     is_staff = models.BooleanField(default=False)
 
@@ -59,7 +54,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def _generate_jwt_token(self):
         dt = datetime.now() + timedelta(days=60)
-        print(dt)
         token = jwt.encode({
             'id': self.pk,
             'exp': int(time.mktime(dt.timetuple()))

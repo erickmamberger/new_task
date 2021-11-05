@@ -1,8 +1,7 @@
-from django.views import generic
+from PIL import Image
 from rest_framework import status, generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.serializers import ListSerializer
 from rest_framework.views import APIView
 
 from .models import User
@@ -18,7 +17,19 @@ class RegistrationAPIView(APIView):
 
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
+        photo = serializer.validated_data['photo']
+
+        base_image = Image.open(photo)
+        watermark = Image.open('media/watermark.jpeg')
+        serializer.validated_data['photo'] = base_image.paste(watermark, (0, 0))
+        base_image.save(f'media/{serializer.validated_data["email"]}.jpg')
+
         serializer.save()
+
+        object = User.objects.get(email=f'{serializer.validated_data["email"]}')
+        object.photo = f'{serializer.validated_data["email"]}.jpg'
+        object.save()
+
 
         return Response(
             {
@@ -42,9 +53,7 @@ class LoginAPIView(APIView):
 
 
 class TestView(APIView):
-    # permission_classes = (IsAuthenticated,)
-    # queryset = User.objects.all()
-    # serializer = GiveSerializer(queryset, many=True)
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         queryset = User.objects.all()
