@@ -39,8 +39,6 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, data):
         email = data.get('email', None)
         password = data.get('password', None)
-        photo = data.get('photo', None)
-        print(photo)
 
         if email is None:
             raise serializers.ValidationError(

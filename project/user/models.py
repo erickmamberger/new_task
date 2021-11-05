@@ -65,3 +65,8 @@ class User(AbstractBaseUser, PermissionsMixin):
             print(ex)
 
         return token
+
+class Like(models.Model):
+
+    owner = models.IntegerField(db_index=True)
+    target = models.IntegerField(db_index=True)
