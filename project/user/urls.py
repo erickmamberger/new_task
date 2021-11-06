@@ -14,4 +14,5 @@ urlpatterns = [
     path('list/usersurname=<str:usersurname>/', FilterBySurnameView.as_view()),
     path('list/max_km=<int:max_km>/', FilterByKmView.as_view()),
     path('clients/position/<int:pk>/', CreateGeoView.as_view()),
+    path('parser/', include('products.urls'))
 ]

@@ -134,7 +134,6 @@ class FilterByKmView(APIView):
     def get(self, request, max_km):
         owner_la = request.user.la
         owner_lo = request.user.lo
-        print(max_km)
         # Начинаем фильтровать пользователей по расстоянию, сравнивая расстояние до них с
         # макс. допустимым - max_km
         all = User.objects.all()
@@ -146,7 +145,6 @@ class FilterByKmView(APIView):
             # Проверяем заполненна ли геопозиция у человека, если нет, то пропускаем его.
             if x.la == 0.1:
                 continue
-            print(get_dist(owner_la, x.la, owner_lo, x.lo))
             if get_dist(owner_la, x.la, owner_lo, x.lo) < max_km:
                 queryset.append(x)
         serializer = UserSerializer(queryset, many=True)
@@ -162,9 +160,9 @@ class CreateGeoView(APIView):
         serializer.is_valid(raise_exception=True)
         la = serializer['la'].value
         lo = serializer['lo'].value
-        print(la, lo)
         object = User.objects.get(pk=pk)
         object.la = la
         object.lo = lo
         object.save()
         return Response({'success': {'la': f'{la}', 'lo': f'{lo}'}})
+
