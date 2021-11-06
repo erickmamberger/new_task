@@ -8,9 +8,9 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .mixins import mailing_func
+from .mixins import mailing_func, get_dist
 from .models import User, Like
-from .serializers import LoginSerializer, GiveSerializer, UserSerializer
+from .serializers import LoginSerializer, GiveSerializer, UserSerializer, GeoSerializer
 from .serializers import RegistrationSerializer
 
 
@@ -67,7 +67,6 @@ class AllUsersView(APIView):
     def get(self, request):
         queryset = User.objects.all()
         serializer = UserSerializer(queryset, many=True)
-        print(serializer.data)
         return Response(serializer.data)
 
 class MatchView(APIView):
@@ -110,7 +109,6 @@ class FilterByGenderView(APIView):
     def get(self, request, gender):
         queryset = User.objects.filter(gender=gender)
         serializer = UserSerializer(queryset, many=True)
-        print(serializer.data)
         return Response(serializer.data)
 
 class FilterByNameView(APIView):
@@ -119,7 +117,6 @@ class FilterByNameView(APIView):
     def get(self, request, username):
         queryset = User.objects.filter(username=username)
         serializer = UserSerializer(queryset, many=True)
-        print(serializer.data)
         return Response(serializer.data)
 
 class FilterBySurnameView(APIView):
@@ -128,5 +125,46 @@ class FilterBySurnameView(APIView):
     def get(self, request, usersurname):
         queryset = User.objects.filter(usersurname=usersurname)
         serializer = UserSerializer(queryset, many=True)
-        print(serializer.data)
         return Response(serializer.data)
+
+
+class FilterByKmView(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, max_km):
+        owner_la = request.user.la
+        owner_lo = request.user.lo
+        print(max_km)
+        # Начинаем фильтровать пользователей по расстоянию, сравнивая расстояние до них с
+        # макс. допустимым - max_km
+        all = User.objects.all()
+        queryset = []
+        for x in all:
+            # Если мы выпали сами себе, то переходим на след. итерац.
+            if x.pk == request.user.pk:
+                continue
+            # Проверяем заполненна ли геопозиция у человека, если нет, то пропускаем его.
+            if x.la == 0.1:
+                continue
+            print(get_dist(owner_la, x.la, owner_lo, x.lo))
+            if get_dist(owner_la, x.la, owner_lo, x.lo) < max_km:
+                queryset.append(x)
+        serializer = UserSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+# VIEW для заполнения значений геопозиции у пользователя
+class CreateGeoView(APIView):
+    permission_classes = [AllowAny]
+    serializer_class = GeoSerializer
+
+    def post(self, request, pk):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        la = serializer['la'].value
+        lo = serializer['lo'].value
+        print(la, lo)
+        object = User.objects.get(pk=pk)
+        object.la = la
+        object.lo = lo
+        object.save()
+        return Response({'success': {'la': f'{la}', 'lo': f'{lo}'}})

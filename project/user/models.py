@@ -26,6 +26,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         )
     photo = models.ImageField()
 
+    # Поля ширины и долготы
+    la = models.FloatField(default=0.1)
+    lo = models.FloatField(default=0.1)
+
     is_staff = models.BooleanField(default=False)
 
     is_active = models.BooleanField(default=True)

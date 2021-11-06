@@ -1,7 +1,7 @@
 from django.urls import re_path, include, path
 
 from .views import RegistrationAPIView, AllUsersView, MatchView, FilterByGenderView, FilterByNameView, \
-    FilterBySurnameView
+    FilterBySurnameView, FilterByKmView, CreateGeoView
 from .views import LoginAPIView
 
 urlpatterns = [
@@ -12,4 +12,6 @@ urlpatterns = [
     path('list/gender=<int:gender>/', FilterByGenderView.as_view()),
     path('list/username=<str:username>/', FilterByNameView.as_view()),
     path('list/usersurname=<str:usersurname>/', FilterBySurnameView.as_view()),
+    path('list/max_km=<int:max_km>/', FilterByKmView.as_view()),
+    path('clients/position/<int:pk>/', CreateGeoView.as_view()),
 ]

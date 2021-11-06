@@ -79,3 +79,12 @@ class GiveSerializer(serializers.Serializer):
     class Meta:
         model = User
         fields = ('email', 'username', 'usersurname', 'gender', 'photo',)
+
+
+class GeoSerializer(serializers.ModelSerializer):
+    la = serializers.FloatField()
+    lo = serializers.FloatField()
+
+    class Meta:
+        model = User
+        fields = ('la', 'lo',)
