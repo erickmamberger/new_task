@@ -1,6 +1,3 @@
-import io
-
-from PIL import Image
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 from .models import User
@@ -17,7 +14,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('email', 'password', 'username', 'usersurname', 'gender', 'photo', 'token',)
+        fields = ('email', 'password', 'username', 'token',)
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
@@ -70,21 +67,9 @@ class LoginSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('email', 'username', 'usersurname', 'gender', 'photo',)
+        fields = ('email', 'username',)
 
 
-class GiveSerializer(serializers.Serializer):
-    child = UserSerializer()
-
-    class Meta:
-        model = User
-        fields = ('email', 'username', 'usersurname', 'gender', 'photo',)
 
 
-class GeoSerializer(serializers.ModelSerializer):
-    la = serializers.FloatField()
-    lo = serializers.FloatField()
 
-    class Meta:
-        model = User
-        fields = ('la', 'lo',)

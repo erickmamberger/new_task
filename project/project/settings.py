@@ -24,7 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'user.apps.UserConfig',
-    'products.apps.ProductsConfig',
+    'questions.apps.QuestionsConfig',
 ]
 
 # auth
@@ -126,11 +126,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-# settings for mailing
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_PORT = 465
-EMAIL_HOST_USER = 'erickmambergermail@yandex.ru'
-EMAIL_HOST_PASSWORD = 'XXX'
-EMAIL_USE_TLS = False
-EMAIL_USE_SSL = True

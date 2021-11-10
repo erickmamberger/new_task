@@ -9,27 +9,16 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from .manager import UserManager
 
+
 class User(AbstractBaseUser, PermissionsMixin):
 
     username = models.CharField(max_length=255)
-    usersurname = models.CharField(max_length=255)
-    GENDER_TYPES = (
-        (1, 'Женщина'),
-        (2, 'Мужчина'),
-    )
-    gender = models.IntegerField(choices=GENDER_TYPES)
 
     email = models.EmailField(
         validators=[validators.validate_email],
         unique=True,
         blank=False
         )
-    photo = models.ImageField()
-
-    # Поля ширины и долготы
-    la = models.FloatField(default=0.1)
-    lo = models.FloatField(default=0.1)
-
     is_staff = models.BooleanField(default=False)
 
     is_active = models.BooleanField(default=True)
@@ -69,8 +58,3 @@ class User(AbstractBaseUser, PermissionsMixin):
             print(ex)
 
         return token
-
-
-class Like(models.Model):
-    owner = models.IntegerField(db_index=True)
-    target = models.IntegerField(db_index=True)
